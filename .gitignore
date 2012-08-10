@@ -1,0 +1,8 @@
+# We don't need the configuration folder, it's created at runtime
+config/
+
+# We only need the basic files from azureus, the other can be ignored
+site/lib/torrentmodules/tvAzureusBridge/azureusServer/*
+!site/lib/torrentmodules/tvAzureusBridge/azureusServer/Azureus2.jar
+!site/lib/torrentmodules/tvAzureusBridge/azureusServer/commons-cli.jar
+!site/lib/torrentmodules/tvAzureusBridge/azureusServer/log4j.jar
