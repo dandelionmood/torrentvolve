@@ -1,0 +1,86 @@
+---------------------------------------------------------------------
+* TorrentVolve - Beta                                               *
+---------------------------------------------------------------------
+
+Installation Notes
+---------------------------------------------------------------------
+Make sure at least PHP 5 and Java 1.5 JRE are installed before 
+completing these instructions.
+Note: SimpleXML support must be enabled in PHP - this might require
+	reconfiguration of PHP on a Linux box with the
+	"--enable-simplexml" flag.
+
+Any questions or problems with the installation can be directed to 
+the following E-mail for support. vancottt@gmail.com
+
+Basic TorrentVolve installation instructions
+---------------------------------------------------------------------
+
+1. After you have downloaded the project you will then need to setup 
+either IIS or Apache to run it on your local network.
+
+2. Copy both the site and config folders to the directory of your choice.
+
+3. Create a new virtual directory in your web server and point the 
+directory location to the "site" folder.
+
+4. Make sure php has write and read access to the config folder.
+
+5. Go to the web site via your browser. You should be redirected to 
+the Install.php page.
+
+6. After filling out the form and clicking submit you should get 
+an installation successful conformation page that will provide a 
+login link. Click that.
+
+7. Now you can login with the admin Username and password.
+
+8. When the install runs, make sure you specify read and write access to
+the directory you specified with the install.
+
+9. If the login is successful you should be taken to the index page 
+where you can view your torrents and drive information. 
+
+Doesn't work? Windows instructions
+--------------------------------------------------------------------
+
+Essentially, you need to grant your IIS/Apache user account full 
+access to the directory in which TorrentVolve is installed.  
+For IIS, this includes both the IUSR_<machine name> and 
+IWAM_<machine name> accounts.
+
+These same permissions should be granted on the download directory 
+you specify in the step below.
+
+For Windows installations, you need to be aware of the permissions 
+on your PHP temporary directory (C:\Windows\temp by default).  When 
+PHP moves uploaded files from this temporary directory, the permissions 
+are taken from the temporary directory, not the destination directory 
+(the specified download directory, in this case).  Again, full access 
+should be granted to IUSR_<machine name> and IWAM_<machine name> 
+on the PHP temporary directory.
+
+When TorrentVolve needs access to the Windows NT command line, it uses 
+the C:\WINDOWS\system32\cmd.exe executable.  On some IIS/Windows installations, 
+you must grant read/execute access to IUSR_<machine name> 
+on this executable because all access is denied by default.
+
+Finally, you need to make sure PHP has a writable session and upload directory.
+Do this by editing your PHP.INI file as follows:
+
+	Set upload_tmp_dir equal to a directory on your hard drive that IIS
+	(IUSR_<machine name> and IWAM_<machine name> accounts) can read and
+	write to (example: upload_tmp_dir="C:\PHP\upload").
+
+	Do that same for the session save directory
+	(example: session.save_path="C:\PHP\session").
+
+Doesn't work? Linux instructions
+------------------------------------------------------------------------
+
+chmod a+w <download directory> - This is the directory that you are going to set 
+torrentvolve to download all of the torrents.
+chmod a+w config - The config folder mentioned on the previous installation
+chmod a+w site/lib/torrentmodules/tvAzureusBridge/azureusServer - Inside TorrentVolve, 
+this is where the azureus server that is prepackaged with the installation. If you are
+using a custom downloading module, then this doesn't apply.

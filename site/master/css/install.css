@@ -1,0 +1,64 @@
+/*
+	TorrentVolve - A lightweight, fully functional torrent client.
+	Copyright (C) 2006  TorrentVolve
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#divInstallCenter { text-align: center; margin-top: 75px; }
+#divInstallBox {
+	text-align: left;
+	margin-left: auto;
+	margin-right: auto;
+	width: 285px;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	border-style: solid;
+}
+#divInstallBoxPad { margin: 5px 5px 5px 5px; }
+	#divDbType { margin-top: 2px; }
+		#divDbTypeLabel { float: left; width: 140px; }
+		#divDbTypeText select { width: 75px; }
+	#divConn { margin-top: 2px; margin-left: 5px; }
+		#divConnLabel { float: left; width: 140px; }
+		#divConnText input { width: 110px; }
+	#divDownloadLocation { margin-top: 2px; margin-left: 5px; }
+		#divDownloadLocationLabel { float: left; width: 140px; }
+		#divDownloadLocationText input { width: 110px; }
+	#divUsername { margin-top: 2px;  margin-left: 5px; }
+		#divUsernameLabel { float: left; width: 140px; }
+		#divUsernameText input { width: 110px; }
+	#divPassword { margin-top: 2px;  margin-left: 5px; }
+		#divPasswordLabel { float: left; width: 140px; }
+		#divPasswordText input { width: 110px; }
+	#divSecretQuestion { margin-top: 2px;  margin-left: 5px; }
+		#divSecretQuestionLabel { float: left; width: 140px; }
+		#divSecretQuestionText input { width: 110px; }
+	#divSecretAnswer { margin-top: 2px;  margin-left: 5px; }
+		#divSecretAnswerLabel { float: left; width: 140px; }
+		#divSecretAnswerText input { width: 110px; }
+	#divDbInstall { margin-top: 2px;  margin-left: 5px; }
+		#divDbInstallNew { float: left; width: 140px; }
+		#divDbInstallExisting { }
+	#divTorType { margin-top: 2px;  margin-left: 5px; }
+		#divTorTypeLabel { float: left; width: 140px; }
+		#divTorTypeText select { width: 125px; }
+	#divSubmit { text-align: right; }
+#divMessageHolder {
+	text-align: center;
+	margin: 5px 5px 5px 5px;
+	color: #CC6600;
+}
+form { margin: 0 0 0 0; }

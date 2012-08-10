@@ -1,0 +1,31 @@
+#divCenter { text-align: center; margin-top: 20px; }
+#divBox {
+	text-align: left;
+	font-size: 14px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 381px;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	border-style: solid;
+	background-color: white;
+}
+/* 
+	We use this so that we don't
+	have to us hacks to manage
+	padding
+*/
+#divPadder {
+	margin: 5px 5px 5px 5px;	
+}
+/*
+	This is all the style information
+	for the forms.
+*/
+#divLogo { }
+#divStatus { text-align: center; font-size: 12px; color: #CC6600; }
+.row { width: 100%; font-size: 12px; }
+.header { width: 135px; }
+.data { width: 230px; }
+.applyRow { text-align: right; }
+form { margin: 0 0 0 0; }

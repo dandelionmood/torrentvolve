@@ -1,0 +1,35 @@
+#divArchiveCenter { text-align: center; margin-top: 20px; }
+#divArchiveBox {
+	text-align: left;
+	font-size: 14px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 640px;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	border-style: solid;
+	background-color: white;
+}
+/* 
+	We use this so that we don't
+	have to us hacks to manage
+	padding
+*/
+.divArchivePadder {
+	margin: 10px 10px 10px 10px;	
+}
+
+/*
+	This is all the style information
+	for the forms.
+*/
+.rowHeadings { font-size: 10px; color: #666666; }
+.headingFilename { width: 534px; float:left; }
+.headingActions { width: 82px; float:left; }
+.divArchiveLogo { }
+.divStatus { text-align: center; font-size: 12px; color: #CC6600; }
+.file { margin: 10px 2px 2px 2px; height: 22px; width: 616px; font-size: 12px; }
+.fileName { width: 534px; float:left; }
+.fileNameUnsure { width: 534px; float:left; }
+.fileNameUnsure a, .fileNameUnsure a:visited:hover { color: red; }
+.fileActions { width: 80px; float:left;}

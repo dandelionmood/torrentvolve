@@ -1,0 +1,34 @@
+#divLoadCenter { text-align: center; margin-top: 20px; }
+#divLoadBox {
+	text-align: left;
+	font-size: 14px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 281px;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	border-style: solid;
+	background-color: white;
+}
+/* 
+	We use this so that we don't
+	have to us hacks to manage
+	padding
+*/
+#divPadder {
+	margin: 5px 5px 5px 5px;	
+}
+/*
+	This is all the style information
+	for the forms.
+*/
+#divLoadLogo { }
+#divStatus { text-align: center; font-size: 12px; color: #CC6600; }
+#divFile { margin: 2px 2px 2px 2px; height: 30px; }
+#divFileLabel { float: left; width: 42px; }
+#divFileText input { float: left; width: 220px; }
+#divUrl { margin: 2px 2px 2px 2px; height: 30px; }
+#divUrlLabel { float: left; width: 42px; }
+#divUrlText input { float:left; width: 220px; }
+.divUpload { text-align: right; margin-bottom: 10px; margin-right: 5px; }
+form { margin: 0 0 0 0; }

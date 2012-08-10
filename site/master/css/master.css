@@ -1,0 +1,82 @@
+/*
+	TorrentVolve - A lightweight, fully functional torrent client.
+	Copyright (C) 2006  TorrentVolve
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+/*
+	The body information to set
+	the center information and default
+	font information.
+*/
+html, body { 
+	font-family: Arial;
+	color: #666666;
+	height: 100%;
+	background-color: #666666; 
+	margin-top: 0px;
+	margin-bottom: 0px;
+	text-align: center;
+	font-size: 12px;
+}
+/* link decorations for the whole family */
+a:hover { text-decoration:underline; color: #CC6600; }
+a:visited { text-decoration: none; color: #0066CC; }
+a:visited:hover { text-decoration: underline; color: #CC6600; }
+a { text-decoration: none; color: #0066CC; }
+img { border-style: none; }
+/* 
+	This holds all of the background 
+	information and positioning 
+	in the center. It holds the
+	whole layout
+*/
+#divPrimaryHolder {
+	margin-left: auto;
+	margin-right: auto;
+	width: 820px;
+	background-image: url('../images/background.gif');
+	background-repeat: repeat-y;
+	background-color: white;
+	min-height: 100%;
+	text-align: left;
+}
+* html #divPrimaryHolder {
+	height:100%
+}
+
+/*
+	The top banner with the logo
+	and housing all of the top
+	banner navigation links
+*/
+#divTopBanner {
+	background-image: url('../images/topBannerBack.gif');
+	background-repeat: repeat-x;
+	height: 52px;
+}
+/*
+	The main content for the entire
+	page.
+*/
+#divContent { }
+
+.innerMargin {
+	margin-left: 10px;
+	margin-right: 10px;
+	width: 800px;
+}
+#divValidation { font-size: 10px; color: #FF6600; }

@@ -1,0 +1,61 @@
+/*
+	TorrentVolve - A lightweight, fully functional torrent client.
+	Copyright (C) 2006  TorrentVolve
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+#divHeader { color: #CCCCCC; }
+	/* 
+		The first half of the upload
+		box.
+	*/
+	#divNav {
+		text-align: right;
+		line-height: 150%;
+		padding-top: 3px;
+		padding-right: 5px;
+		font-size: 14px;
+		color: #666666;
+	}
+#divCenter { text-align: center; margin-top: 25px; }
+#divBox {
+	text-align: left;
+	margin-left: auto;
+	margin-right: auto;
+	width: 322px;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	border-style: solid;
+}
+/* 
+	We use this so that we don't
+	have to use hacks to manage
+	padding
+*/
+#divPadder { margin: 5px 5px 10px 8px; }
+/*
+	This is all the style information
+	for the forms.
+*/
+#divLogo { }
+#divStatus { text-align: center; color: #CC6600; }
+.field { font-size: 12px; margin-left: 5px; height: 30px; }
+.fieldLabel { width: 140px; }
+.fieldLabelHighlight { width: 140px; color: #CC6600; }
+.fieldData { width: 155px; }
+.fieldData input { width: 150px; }
+.fieldData select { width: 150px; }
+#rowSubmit { text-align: right; margin: 5px auto 5px auto; }
+form { margin: 0 0 0 0; }

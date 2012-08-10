@@ -1,0 +1,186 @@
+---------------------------------------
+--- TorrentVolve Installation Guide ---
+---           for Ubuntu            ---
+---                                 ---
+---           TJ Van Cott           ---
+---           01.01.2007            ---
+---------------------------------------
+
+--------------------
+--- INTRODUCTION ---
+--------------------
+
+TorrentVolve is a cross-platform PHP-driven web-based BitTorrent client. 
+It focuses on speed and reliability, while also providing a full 
+feature set. It includes a user management system, a Torrent file 
+manager, and a configurable Torrent downloader.
+
+The purpose of this installation guide is to provide you with 
+easy-to-follow instructions for installing TorrentVolve on top of 
+Ubuntu.
+
+The following packages (and their dependencies) will be installed:
+	- apache2
+	- php5
+	- java-gcj-compat OR sun-java5-jre (which is recommended)
+	- unzip
+
+We recommend at least the following system specifications for 
+a TorrentVolve server running on Ubuntu:
+	- 500 MHz processor
+	- 128 MB RAM
+	- 20 MB free hard drive space for TorrentVolve installation
+
+Note: This guide was written for Ubuntu 6.10, but it should work for 
+other versions of Ubuntu.
+
+-------------------------
+--- INSTALLING UBUNTU ---
+-------------------------
+
+The first thing you want to do is download a copy of Ubuntu from 
+http://www.ubuntu.com/download. You can install TorrentVolve on any 
+flavor of Ubuntu: Desktop, Server or Alternate.
+
+If you need help installing Ubuntu, refer to this helpful installation 
+guide: http://www.howtoforge.com/perfect_setup_ubuntu_6.06.
+
+-------------------------
+--- INSTALLING APACHE ---
+-------------------------
+
+Once Ubuntu is installed, login using the account you created during the 
+installation process.
+
+Install the Apache HTTP Server by running (you'll need to enter the root 
+password):
+	sudo apt-get install apache2
+
+You should be able to access your Apache server at http://localhost.
+
+----------------------
+--- INSTALLING PHP ---
+----------------------
+
+Now that Apache is installed, you can install PHP. But first, you need 
+to enable other package repositories in your APT's /etc/apt/sources.list 
+file by adding or simply uncommenting the following lines (some of these 
+lines may already be uncommented):
+	deb http://archive.ubuntu.com/ubuntu/ edgy universe
+	deb http://archive.ubuntu.com/ubuntu/ edgy multiverse
+In the United States:
+	deb http://us.archive.ubuntu.com/ubuntu/ edgy universe
+	deb http://us.archive.ubuntu.com/ubuntu/ edgy multiverse
+
+After doing this, update the APT cache:
+	sudo apt-get update
+
+Go ahead and install PHP on top of Apache by running the following:
+	sudo apt-get install php5
+
+-----------------------
+--- INSTALLING JAVA ---
+-----------------------
+
+The final package you need to install is the Java runtime. You can 
+install one of two packages: java-gcj-compat or sun-java5-jre. We 
+recommend using sun-java5-jre, as the Azureus CLI (which is what 
+TorrentVolve uses to manage Torrents by default) works much better with 
+it.
+
+Run the following to install the java-gcj-compat package: 
+	sudo apt-get install java-gcj-compat
+
+OR
+
+You can install sun-java5-jre by following a few steps. First you should 
+remove the java-gcj-compat package since Ubuntu uses it as its default 
+Java runtime:
+	sudo apt-get remove --purge java-gcj-compat
+
+You can now install the sun-java5-jre pacakge:
+	sudo apt-get install sun-java5-jre
+
+Once you have installed either java-gcj-compat or sun-java5-jre, run the 
+"java" command. This command should successfully execute and return its 
+syntax help.
+
+------------------------
+--- INSTALLING UNZIP ---
+------------------------
+
+Depending on how you installed Ubuntu, you may or may not have the unzip 
+package. Run the following to make sure you have unzip installed:
+	sudo apt-get install unzip
+
+-------------------------------
+--- INSTALLING TORRENTVOLVE ---
+-------------------------------
+
+Download the latest version of TorrentVolve from 
+http://sourceforge.net/project/showfiles.php?group_id=179905. The 
+installation file will be a .zip file.
+
+If you are using a command-line-only install of Ubuntu, use wget to get 
+the TorrentVolve install file:
+	wget http://prdownloads.sourceforge.net/torrentvolve/torrentvolve-<version>.zip?download
+In our case:
+	wget http://prdownloads.sourceforge.net/torrentvolve/torrentvolve-1.3-beta.zip?download
+
+If you plan to use the /var/www folder for your TorrentVolve 
+installation, clear out its default contents first:
+	sudo rm -r /var/www/*
+
+Unzip TorrentVolve to your chosen installation directory:
+	sudo unzip -d <installation directory> torrentvolve-<version>.zip
+In our case:
+	sudo unzip -d /var/www torrentvolve-1.3-beta.zip
+
+Change to your TorrentVolve installation directory:
+	cd <installation directory>
+In our case:
+	cd /var/www
+
+You need to enable write access to certain TorrentVolve directories:
+	sudo chmod a+w config
+	sudo chmod a+w site/lib/torrentmodules/tvAzureusBridge/azureusServer
+
+Then, create a download directory for TorrentVolve (this will be where 
+the Torrent Module saves downloaded Torrents):
+	sudo mkdir <download directory>
+In our case:
+	sudo mkdir downloads
+
+Like for the other two directories, enable write access to the download 
+directory:
+	sudo chmod a+w <download directory>
+In our case:
+	sudo chmod a+w downloads
+
+The last step to installing TorrentVolve is pointing your Apache site to 
+the TorrentVolve site directory. Open the 
+/etc/apache2/sites-available/default file in a text editor:
+	example: sudo nano /etc/apache2/sites-available/default
+	example: sudo vi /etc/apache2/sites-available/default
+Find the line:
+	DocumentRoot /var/www
+And change it to read:
+	DocumentRoot <installation directory>
+In our case:
+	DocumentRoot /var/www/site
+Then, find the line:
+	<Directory /var/www/>
+And change it to read:
+	<Directory <installation directory>>
+In our case:
+	<Directory /var/www/site>
+
+After you have changed the /etc/apache2/sites-available/default file, 
+reload the Apache server configuration:
+	sudo /etc/init.d/apache2 force-reload
+
+You should now be able to access TorrentVolve via http://locahost. 
+Fill out the form to configure TorrentVolve.
+
+Thank you for your interest in TorrentVolve! Please direct any questions 
+or comments to vancottt@gmail.com.

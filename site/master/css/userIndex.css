@@ -1,0 +1,62 @@
+/*
+	TorrentVolve - A lightweight, fully functional torrent client.
+	Copyright (C) 2006  TorrentVolve
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+#divHeader { color: #000000; }
+	#divNav {
+		text-align: right;
+		line-height: 150%;
+		padding-top: 3px;
+		padding-right: 5px;
+		font-size: 14px;
+		color: #666666;
+	}
+
+#divCPCenter { text-align: center; margin-top: 40px; }
+#divCPBox {
+	text-align: left;
+	margin-left: auto;
+	margin-right: auto;
+	width: 298px;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	border-style: solid;
+}
+#divCPBoxPadding { margin: 10px 10px 15px 10px; }
+#divLatestMessage { margin-left: 5px; margin-top: 5px; color: #CC6600; }
+#divLatestMessageLabel { float: left; }
+#divLatestMessageText { margin-bottom: 10px; }
+#divOldPassword {  }
+#divOldPasswordLabel { float: left; width: 145px; }
+#divOldPasswordText input { width: 125px; }
+#divNewPassword { margin-top: 5px; }
+#divNewPasswordLabel { float: left; width: 145px; }
+#divNewPasswordText input { width: 125px; }
+#divConfirm { margin-top: 5px; }
+#divConfirmLabel { float: left; width: 145px; }
+#divConfirmText input { width: 125px; }
+#divLinks { text-align: right; margin-top: 10px; margin-right: 5px; }
+#divLinksBack { width: 50px; }
+#divLinksSubmit { }
+#divQuestion { margin-top: 5px; }
+#divQuestionLabel { float: left; width: 145px; }
+#divQuestionText input { width: 125px; }
+#divAnswer { margin-top: 5px; }
+#divAnswerLabel { float: left; width: 145px; }
+#divAnswerText input { width: 125px; }
+form { margin: 0 0 0 0; }
