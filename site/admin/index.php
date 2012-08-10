@@ -81,6 +81,7 @@ if(isset($_SESSION['user']) && user_getUserByUsername($_SESSION['user'])->getAut
 		$xmlConfig->setMaxActiveTorrents($_POST['maxActiveTorrents']);
 		$xmlConfig->setTcpPort($_POST['tcpPort']);
 		$xmlConfig->setUdpPort($_POST['udpPort']);
+		$xmlConfig->setHideOtherUsers($_POST['hideOtherUsers']);
 		config_setConfiguration($xmlConfig);
 
 	//write settings to Torrent Module
@@ -155,6 +156,15 @@ if(isset($_SESSION['user']) && user_getUserByUsername($_SESSION['user'])->getAut
 			<div class="divSetting">
 				<div class="divSettingLabel">UDP Listen Port:</div>
 				<div class="divSettingText"><input type="text" name="udpPort" value="<?php echo $xmlConfig->getUdpPort();?>"/></div>
+			</div>
+			<div class="divSetting">
+				<div class="divSettingLabel">Hide basic users torrents to <br />each other ?</div>
+				<div class="divSettingText">
+					<select name="hideOtherUsers">
+						<option <?php if( $xmlConfig->getHideOtherUsers() == 'yes' ): ?>selected="selected"<?php endif; ?>>yes</option>
+						<option <?php if( $xmlConfig->getHideOtherUsers() == 'no' ): ?>selected="selected"<?php endif; ?>>no</option>
+					</select>
+				</div>
 			</div>
 			<div id="divSubmit"><input type="submit" value="Modify Settings" /></div>
 			</form>

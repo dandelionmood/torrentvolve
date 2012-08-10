@@ -142,7 +142,15 @@ if(count($torrentArray['torrents']['torrentNumber']) == 0) {
 
 		if(isset($torrentUsers[$torrentName])) $torrentUser = $torrentUsers[$torrentName]->getUserName();
 		else $torrentUser = 'Unknown';
-
+		
+		// If the user is a basic one, we check that the other users aren't
+		// automatically hidden via the configuration.
+		if( $userAuthLevel == 'User' ) {
+			require_once('lib/configuration.php');
+			$hideOtherUsers = ( config_getConfiguration()->getHideOtherUsers() == 'yes' );
+			if( $userName != $torrentUser && $hideOtherUsers ) continue;
+		}
+		
 		$seedText = "Seeds: (" . $torrentArray['torrents']['connectedSeeds'][$i] .
 					" / " . $torrentArray['torrents']['availableSeeds'][$i] . ")";
 		$peerText = "Peers: (" . $torrentArray['torrents']['connectedPeers'][$i] .

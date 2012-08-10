@@ -32,10 +32,11 @@
 		var $maxActiveTorrents;
 		var $tcpPort;
 		var $udpPort;
+		var $hideOtherUsers;
 		
 		public function __construct($downloadLocation, $torrentModule,
 			$maxDownloadSpeed, $maxUploadSpeed, $maxDownloads, $maxUploads,
-			$maxActiveTorrents, $tcpPort, $udpPort){
+			$maxActiveTorrents, $tcpPort, $udpPort, $hideOtherUsers){
 			$this->downloadLocation = $downloadLocation;
 			$this->torrentModule = $torrentModule;
 			$this->maxDownloadSpeed = $maxDownloadSpeed;
@@ -45,7 +46,9 @@
 			$this->maxActiveTorrents = $maxActiveTorrents;
 			$this->tcpPort = $tcpPort;
 			$this->udpPort = $udpPort;
+			$this->hideOtherUsers = $hideOtherUsers;
 		}
+		
 		public function getDownloadLocation(){ return $this->downloadLocation; }
 		public function getTorrentModule(){ return $this->torrentModule; }
 		public function getMaxDownloadSpeed() { return $this->maxDownloadSpeed; }
@@ -55,6 +58,8 @@
 		public function getMaxActiveTorrents() { return $this->maxActiveTorrents; }
 		public function getTcpPort() { return $this->tcpPort; }
 		public function getUdpPort() { return $this->udpPort; }
+		public function getHideOtherUsers() { return $this->hideOtherUsers; }
+		
 		public function setDownloadLocation($downloadLocation) { 
 			$this->downloadLocation = $downloadLocation; 
 		}
@@ -82,6 +87,9 @@
 		public function setUdpPort($udpPort) {
 			$this->udpPort = $udpPort;
 		}
+		public function setHideOtherUsers($hideOtherUsers) {
+			$this->hideOtherUsers = $hideOtherUsers;
+		}
 	}
 	
 	/**
@@ -104,7 +112,8 @@
 			$xml->maxUploads,
 			$xml->maxActiveTorrents, 
 			$xml->tcpPort, 
-			$xml->udpPort);
+			$xml->udpPort,
+			$xml->hideOtherUsers);
 		return $config;
 	}
 	
@@ -128,6 +137,7 @@
 		$xml->maxActiveTorrents = (string)$config->getMaxActiveTorrents();
 		$xml->tcpPort = (string)$config->getTcpPort();
 		$xml->udpPort = (string)$config->getUdpPort();
+		$xml->hideOtherUsers = (string)$config->getHideOtherUsers();
 		if(@file_put_contents(APPPATH . "../../config/configuration.xml", $xml->asXML())) return true;
 		else return false;
 	}
@@ -152,6 +162,7 @@
 	<maxActiveTorrents>null</maxActiveTorrents>
 	<tcpPort>null</tcpPort>
 	<udpPort>null</udpPort>
+	<hideOtherUsers>no</hideOtherUsers>
 </configuration>';
 		return $xmlString;
 	}
