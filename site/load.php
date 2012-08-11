@@ -42,105 +42,204 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <?php
 $loadContent = false;
 
-if(empty($_SESSION['user']))
-echo('<div id="divStatus">You must be logged in to load a Torrent.<br /><br /><input type="button" value="Close" onclick="javascript:window.close()"/></div>');
+// It is compulsory to be logged in.
+// ---------------------------------------------------------------
+if(empty($_SESSION['user'])) {
+	echo('<div id="divStatus">You must be logged in to load a Torrent.<br /><br />
+		<input type="button" value="Close" onclick="javascript:window.close()"/></div>');
+}
 else
 {
+	// Are there torrent files or URL to process ?
+	// ---------------------------------------------------------------
 	if(isset($_FILES['torrentFile']['name']) || isset($_POST['url']))
 	{
+		// This variable will get true once we know we need to add torrents
+		// to the download queue.
 		$loadTorrent = false;
-
-		//get download directory from config 		
+		
+		// We initialise those variables as we're going to need them later.
+		$torrentNames = array();
+		$uploadFiles = array();
+		
+		// Get download directory from config 		
 		require_once('lib/configuration.php');
 		$uploadRoot = config_getConfiguration()->getDownloadLocation();
 
-		//change to config-specified directory
-		$uploadDir = $uploadRoot . '/' . (string)$_SESSION['user'];
+		// Change to config-specified directory
+		$uploadDir = $uploadRoot.DIRECTORY_SEPARATOR.(string)$_SESSION['user'];
 
-		//create download directory if it doesn't exist
+		// Create download directory if it doesn't exist
 		if(!file_exists($uploadDir))
 		mkdir($uploadDir);
-
+		
 		require_once('lib/torrent.php');
-
+		
+		// Torrent files were uploaded directly
+		// ------------------------------------
 		if(isset($_FILES['torrentFile']['name'])) {
-			if (stristr($_FILES['torrentFile']['name'], ".torrent")) {
-
-				//get the actual name of the torrent
-				$torrentName = torrent_getTorrentNameFromFileName($_FILES['torrentFile']['tmp_name'], $_FILES['torrentFile']['name']);
-				$uploadFile = $uploadDir . '/' . $torrentName . '.torrent';
-
-				//the uploader breaks permissions
-				move_uploaded_file($_FILES['torrentFile']['tmp_name'], $uploadFile);
-
-				$loadTorrent = true;
+			
+			// We iterate on those to finish their uploading
+			for( $i = 0; $i < count($_FILES['torrentFile']['name']); $i++ ) {
+				
+				// A quick check on the filename ...
+				if (stristr($_FILES['torrentFile']['name'][$i], '.torrent')) {
+					
+					// get the actual name of the torrent
+					$torrentNames[] = torrent_getTorrentNameFromFileName(
+						$_FILES['torrentFile']['tmp_name'][$i],
+						$_FILES['torrentFile']['name'][$i]
+					);
+					
+					$uploadFiles[] = $uploadDir.DIRECTORY_SEPARATOR
+						.$torrentNames[$i].'.torrent';
+					
+					// the uploader breaks permissions
+					move_uploaded_file(
+						$_FILES['torrentFile']['tmp_name'][$i],
+						$uploadFiles[$i]
+					);
+					
+					$loadTorrent = true;
+					
+				}
+				else
+				{
+					echo('<div id="divStatus">The file you uploaded is not a Torrent.</div><br />');
+					
+					$loadContent = true;
+				}
+			
 			}
-			else
-			{
-				echo('<div id="divStatus">The file you uploaded is not a Torrent.</div><br />');
-				$loadContent = true;
-			}
+		
+		// ... A URL was provided
+		// ----------------------
 		} else {
 
-			if(isset($_POST['url']) && $_POST['url'] != '') {
-				//open URL
-				$webFile = @fopen($_POST['url'], 'rb');
+			if(!empty($_POST['url'])) {
 				
-				//download file
-				$contents = '';
-				do {
-					$data = fread($webFile, 8192);
-					if (strlen($data) == 0) {
-						break;
-					}
-					$contents .= $data;
-				} while (true);
-				fclose($webFile);
-
-				//get the actual name of the torrent
-				$torrentName = torrent_getTorrentNameFromFileData($contents);
-				$uploadFile = $uploadDir . '/' . $torrentName . '.torrent';
-				$torrentFile = @fopen($uploadFile, 'wb');
-				fwrite($torrentFile, $contents);
-				fclose($torrentFile);
-
-				$loadTorrent = true;
+				// We need to download the file contents first, let's decide how :
+				// ---------------------------------------------------------------
+				
+				// The fopen buffered way, if it's available
+				if( ini_get('allow_url_fopen') ) {
+					
+					$webFile = @fopen($_POST['url'], 'rb');
+					//download file
+					$contents = '';
+					do {
+						$data = fread($webFile, 8192);
+						if (strlen($data) == 0) {
+							break;
+						}
+						$contents .= $data;
+					} while (true);
+					fclose($webFile);
+					
+				// We fall back to Curl if that isn't allowed (safe mode)
+				} elseif( in_array('curl', get_loaded_extensions()) ) {
+					
+					$curl = curl_init();  
+					curl_setopt($curl, CURLOPT_URL, $_POST['url']);  
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  
+					$contents = curl_exec($curl);  
+					curl_close($curl);   
+					
+				} else {
+					
+					echo('<div id="divStatus">You must either allow URL opening via
+						fopen() or install PHP Curl extension to do that.</div><br />');
+					$loadContent = true;
+					
+				}
+				
+				// The file content was successfully retrieved.
+				// --------------------------------------------
+				if( $content ) {
+					
+					// Get the actual name of the torrent
+					$torrentNames[] = torrent_getTorrentNameFromFileData($contents);
+					$uploadFiles[] = $uploadDir.DIRECTORY_SEPARATOR
+						.$torrentNames[0].'.torrent';
+					
+					file_put_contents($uploadFiles[0], $contents);
+					
+					$loadTorrent = true;
+				}
+				
 			} else {
+				
 				echo('<div id="divStatus">The URL was left empty.</div><br />');
 				$loadContent = true;
+				
 			}
 		}
 		
+		// There are torrents to upload ...
+		// --------------------------------
 		if($loadTorrent) {
+			
 			require_once('lib/torrent_module_loader.php');
 			$torrentModule = new TorrentFunctions('localhost');
-			$torrentModule->addTorrentByFile($uploadFile, $uploadDir);
 			
-			$torrent = new Torrent($_SESSION['user'], $torrentName, 'not defined');
-
-			torrent_addTorrent($torrent);
-
-			echo('<div id="divStatus">The Torrent was successfully loaded.<br /><br /><input type="button" value="Close" onclick="javascript:window.close()"/></div>');
+			$errors = array();
+			
+			// We iterate on the files we need to upload.
+			foreach( $uploadFiles as $i => $uploadFile ) {
+				$uploadFile = $uploadFiles[$i];
+				$torrentName = $torrentNames[$i];
+				
+				$torrentModule->addTorrentByFile($uploadFile, $uploadDir);
+				$torrent = new Torrent($_SESSION['user'], $torrentName, 'not defined');
+				
+				// We add the torrent to the queue and check for an error.
+				$r = torrent_addTorrent($torrent);
+				if( !$r ) $errors[] = $torrentName;
+			}
+			
+			if( count($errors) > 0 ) {
+				
+				echo('<div id="divStatus">There was an issue with the following
+					torrents, they may have already been downloaded by either you or
+					another user :<br />'
+					.implode(', ', $errors).'<br />'
+					.'<input type="button" value="Close" onclick="javascript:window.close()"/></div>');
+				
+			} else {
+				
+				$howManyFiles = count($uploadFiles);
+				if( $howManyFiles == 1 ) {
+					echo('<div id="divStatus">The torrent was successfully loaded.<br /><br />
+						<input type="button" value="Close" onclick="javascript:window.close()"/></div>');
+				} else {
+					echo('<div id="divStatus">The '.$howManyFiles.' torrents were successfully loaded.<br /><br />
+						<input type="button" value="Close" onclick="javascript:window.close()"/></div>');
+				}
+				
+			}
+			
 		}
+		
 	} else $loadContent = true;
-
+	
+	// Do we need to display a form ?
 	if($loadContent == true) {
 		?>
 <form action="load.php" method="post" enctype="multipart/form-data">
-<div id="divFile">
-<div id="divFileLabel">File:</div>
-<div id="divFileText"><input type="file" name="torrentFile" /></div>
-</div>
-<div class="divUpload"><input type="submit" value="Upload"
-	alt="Upload" /></div>
+	<div id="divFile">
+	<div id="divFileLabel">File:</div>
+	<div id="divFileText"><input type="file" name="torrentFile[]" multiple="multiple" /></div>
+	</div>
+	<div class="divUpload"><input type="submit" value="Upload"
+		alt="Upload" /></div>
 </form>
 <form action="load.php" method="post" enctype="multipart/form-data">
-<div id="divUrl">
-<div id="divUrlLabel">URL:</div>
-<div id="divUrlText"><input type="text" name="url" /></div>
-</div>
-<div class="divUpload"><input type="submit" value="Upload"
-	alt="Upload" /></div>
+	<div id="divUrl">
+		<div id="divUrlLabel">URL:</div>
+		<div id="divUrlText"><input type="text" name="url" /></div>
+	</div>
+	<div class="divUpload"><input type="submit" value="Upload"
+		alt="Upload" /></div>
 </form>
 <?php
 	}
