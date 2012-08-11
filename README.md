@@ -23,4 +23,6 @@ and maybe try to improve its look and feel, if I find the time.
 
 Here are the features I've added so far :
 
-* Added an admin option to prevent "basic" users from seeing other users torrents.
+* an admin option to prevent "basic" users from seeing other users torrents.
+* you can upload several .torrent files at once through the form.
+* cUrl extension will be used as a fallback to get .torrent files from URL if fopen() is disabled (eg. in safe mode).
