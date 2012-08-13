@@ -1,10 +1,15 @@
-<img src="https://github.com/dandelionmood/torrentvolve/raw/master/site/master/images/favicon.png"
-	style="float: right;"
-	alt="The project logo" />
-
-# TorrentVolve #
-
-## What is this ? ##
+<table width="100%">
+	<tr style="border: 0;">
+		<td style="border: 0; padding: 0;">
+			<h1>TorrentVolve</h1>
+			<h2>What is this ?</h2>
+		</td>
+		<td width="128px" style="border: 0; padding: 0;">
+			<img src="https://github.com/dandelionmood/torrentvolve/raw/master/site/master/images/favicon.png"
+				alt="The project logo" />
+		</td>
+	</tr>
+</table>
 
 This is a repository to store my little tweaks on the TorrentVolve project.
 
