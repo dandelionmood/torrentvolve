@@ -57,6 +57,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title><?php echo $pageTitle; ?></title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="<?php echo $basedir,'master/images/favicon.ico'; ?>" />
+	<link rel="icon" type="image/png" href="<?php echo $basedir,'master/images/favicon.png'; ?>" />
+	
 	<link rel="stylesheet" type="text/css" href="<?php print $basedir . 'master/css/master.css'; ?>" />
 	<?php echo $pageHead; ?>
 
