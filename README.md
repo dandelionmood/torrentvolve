@@ -1,5 +1,9 @@
 # TorrentVolve #
 
+<img src="https://github.com/dandelionmood/torrentvolve/raw/master/site/master/images/favicon.png"
+	style="float: right;"
+	alt="The project logo" />
+
 ## What is this ? ##
 
 This is a repository to store my little tweaks on the TorrentVolve project.
