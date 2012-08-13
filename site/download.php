@@ -17,38 +17,6 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-//We still use this method with PclZip
-//so that we can stop adding files if
-//the user disconnects.
-function fillZipArchive(&$zipArchive, $directory, $extension = '') {
-
-	//only ZIP more if the client is still connected
-	if(connection_status() == 0) {
-		$directoryListing = scandir($directory);
-
-		foreach($directoryListing as $file) {
-		
-			$itemPath = "$directory/$file";
-			if($extension == '') $fileName = "$file";
-			else $fileName = "$extension/$file";
-
-			//only ZIP this file if the client is still connected
-			//OLD ZipArchive CODE
-			//if(is_file($itemPath) && connection_status() == 0) $zipArchive->addFile($itemPath, $fileName);
-			if(is_file($itemPath) && connection_status() == 0) $zipArchive->add($itemPath,
-				PCLZIP_OPT_NO_COMPRESSION,
-				PCLZIP_OPT_REMOVE_ALL_PATH,
-				PCLZIP_OPT_ADD_PATH, $extension);
-
-			if(is_dir($itemPath)) {
-				
-				if($file != '.' && $file != '..') fillZipArchive(&$zipArchive, $itemPath, $fileName);
-			}
-		}
-	}
-}
-
 require_once('lib/configuration.php');
 
 $fileName = $_GET['file'];
@@ -61,31 +29,29 @@ if(file_exists($filePath)) {
 	//allow lots of time (an hour) to create the ZIP archive
 	//or for the client to download the file
 	set_time_limit(3600);
-
+	
+	// If the file is actually a directory, we're going to create a zip archive
+	// to allow an easy download.
 	if(is_dir($filePath)) {
-
-		//old PHP 5.2 ZipArchive code
-		//we now use PclZip for portability
-		//and its support of store-only
-		//zipping
-		//$zipFile = new ZipArchive();
-		//$zipFile->open($filePath . '.zip', ZIPARCHIVE::OVERWRITE);
-		//fillZipArchive(&$zipFile, $filePath);
-		//$zipFile->close();
-
-		require_once('lib/pclzip.lib.php');
-
-		//delete ZIP file if it already exists
-		if(file_exists("$filePath.zip")) unlink("$filePath.zip");
-
-		$zipFile= new PclZip("$filePath.zip");
-
-		//populate ZIP archive
-		fillZipArchive(&$zipFile, $filePath);
 		
-		$filePath = $filePath . '.zip';
-		$fileName = $fileName . '.zip';
-
+		// We're going to need the zip function.
+		require_once('lib/zip.php');
+		
+		// We list files and create an archive of the folder for the user
+		// to download.
+		$zipfile = "$filePath.zip";
+		$objects = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator($filePath),
+			RecursiveIteratorIterator::SELF_FIRST
+		);
+		$files = array();
+		foreach($objects as $name => $object) $files[] = $name;
+		create_zip($files, $zipfile, false);
+		
+		// We're going to give the zip archive to our user.
+		$filePath = $zipfile;
+		$fileName = "$fileName.zip";
+		
 		$deleteAfterSend = true;
 	}
 
@@ -99,15 +65,15 @@ if(file_exists($filePath)) {
 	header('Content-Disposition: attachment; filename="' . $fileName . '"');
 	header('Content-length:' . filesize($filePath));
 
-	//send to client while connection is alive and file is not empty
+	// Send to client while connection is alive and file is not empty
 	while(!feof($file) && connection_status() == 0) {
-
 		print fread($file, 8192);
 		flush();
 	}
-    
+  
 	fclose($file);
 
 	if($deleteAfterSend) unlink($filePath);
+	
 } else echo 'The specified file does not exist.';
 ?>
