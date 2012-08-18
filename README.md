@@ -35,3 +35,6 @@ Here are the features I've added so far :
 * an admin option to prevent "basic" users from seeing other users torrents.
 * you can upload several .torrent files at once through the form.
 * cUrl extension will be used as a fallback to get .torrent files from URL if fopen() is disabled (eg. in safe mode).
+* an admin option to allow direct file download (instead of streaming them).
+  This is a bit less secure (as the user can potentially download files from
+	other users if they know the URL) but it's also more convenient to use.
