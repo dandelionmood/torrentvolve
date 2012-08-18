@@ -20,7 +20,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 require_once('lib/configuration.php');
 
 $fileName = $_GET['file'];
-$filePath = config_getConfiguration()->getDownloadLocation() . '/' . $_GET['user'] . '/' . $fileName ;
+
+$xmlConfig = config_getConfiguration();
+$filePath = config_getConfiguration()->getDownloadLocation()
+	.'/'.$_GET['user'].'/'.$fileName;
 $fileNameSplit = split('/', $fileName);
 $fileName = $fileNameSplit[count($fileNameSplit) - 1];
 
@@ -57,23 +60,40 @@ if(file_exists($filePath)) {
 
 	ob_end_clean();
 
-	$file = fopen($filePath, 'rb');
-
-	header('Pragma: ');// leave blank to avoid IE errors
-	header('Cache-Control: ');// leave blank to avoid IE errors
-	header('Content-type: application/octet-stream');
-	header('Content-Disposition: attachment; filename="' . $fileName . '"');
-	header('Content-length:' . filesize($filePath));
-
-	// Send to client while connection is alive and file is not empty
-	while(!feof($file) && connection_status() == 0) {
-		print fread($file, 8192);
-		flush();
+	// We're going to stream the file to the user (this way, there is no way
+	// for him to know where other files are stored)
+	if( $xmlConfig->getAllowDirectDownload() == 'no' ) {
+		
+		$file = fopen($filePath, 'rb');
+		
+		header('Pragma: ');// leave blank to avoid IE errors
+		header('Cache-Control: ');// leave blank to avoid IE errors
+		header('Content-type: application/octet-stream');
+		header('Content-Disposition: attachment; filename="'.$fileName.'"');
+		header('Content-length:' . filesize($filePath));
+		
+		// Send to client while connection is alive and file is not empty
+		while(!feof($file) && connection_status() == 0) {
+			print fread($file, 8192);
+			flush();
+		}
+		
+		fclose($file);
+		
+		if($deleteAfterSend) unlink($filePath);
+	
 	}
-  
-	fclose($file);
-
-	if($deleteAfterSend) unlink($filePath);
+	
+	// We're simply going to let the user download his file.
+	else {
+		
+		// We're using the configuration to define 
+		$direct_download_url = $url_to_direct_download_dir
+			.$_GET['user'].'/'.$fileName;
+		
+		header("Location: $direct_download_url");
+		
+	}
 	
 } else echo 'The specified file does not exist.';
 ?>

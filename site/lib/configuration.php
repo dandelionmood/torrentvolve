@@ -22,6 +22,17 @@
 	$appPath = dirname($f) . "/";
 	if(!defined("APPPATH")) define("APPPATH", "$appPath");
 	
+	// This symlink will allow direct file download. It's automatically created
+	// when direct download is activated by the administrator.
+	$symlink_to_direct_download_dir = APPPATH.'../downloaded-files';
+	
+	// This URL will be used in download.php to give a direct URL for the
+	// user to download.
+	$url_to_direct_download_dir =
+		( (isset($_SERVER['HTTPS'])) ? 'https://' : 'http://' )
+		.$_SERVER["HTTP_HOST"]
+		.'/downloaded-files/';
+	
 	class Configuration {
 		var $downloadLocation;
 		var $torrentModule;
@@ -33,10 +44,12 @@
 		var $tcpPort;
 		var $udpPort;
 		var $hideOtherUsers;
+		var $allowDirectDownload;
 		
-		public function __construct($downloadLocation, $torrentModule,
+		public function __construct( $downloadLocation, $torrentModule,
 			$maxDownloadSpeed, $maxUploadSpeed, $maxDownloads, $maxUploads,
-			$maxActiveTorrents, $tcpPort, $udpPort, $hideOtherUsers){
+			$maxActiveTorrents, $tcpPort, $udpPort, $hideOtherUsers,
+			$allowDirectDownload ){
 			$this->downloadLocation = $downloadLocation;
 			$this->torrentModule = $torrentModule;
 			$this->maxDownloadSpeed = $maxDownloadSpeed;
@@ -47,6 +60,7 @@
 			$this->tcpPort = $tcpPort;
 			$this->udpPort = $udpPort;
 			$this->hideOtherUsers = $hideOtherUsers;
+			$this->allowDirectDownload = $allowDirectDownload;
 		}
 		
 		public function getDownloadLocation(){ return $this->downloadLocation; }
@@ -59,6 +73,7 @@
 		public function getTcpPort() { return $this->tcpPort; }
 		public function getUdpPort() { return $this->udpPort; }
 		public function getHideOtherUsers() { return $this->hideOtherUsers; }
+		public function getAllowDirectDownload() { return $this->allowDirectDownload; }
 		
 		public function setDownloadLocation($downloadLocation) { 
 			$this->downloadLocation = $downloadLocation; 
@@ -90,6 +105,9 @@
 		public function setHideOtherUsers($hideOtherUsers) {
 			$this->hideOtherUsers = $hideOtherUsers;
 		}
+		public function setAllowDirectDownload($allowDirectDownload) {
+			$this->allowDirectDownload = $allowDirectDownload;
+		}
 	}
 	
 	/**
@@ -113,7 +131,8 @@
 			$xml->maxActiveTorrents, 
 			$xml->tcpPort, 
 			$xml->udpPort,
-			$xml->hideOtherUsers);
+			$xml->hideOtherUsers,
+			$xml->allowDirectDownload);
 		return $config;
 	}
 	
@@ -138,6 +157,7 @@
 		$xml->tcpPort = (string)$config->getTcpPort();
 		$xml->udpPort = (string)$config->getUdpPort();
 		$xml->hideOtherUsers = (string)$config->getHideOtherUsers();
+		$xml->allowDirectDownload = (string)$config->getAllowDirectDownload();
 		if(@file_put_contents(APPPATH . "../../config/configuration.xml", $xml->asXML())) return true;
 		else return false;
 	}
@@ -163,6 +183,7 @@
 	<tcpPort>null</tcpPort>
 	<udpPort>null</udpPort>
 	<hideOtherUsers>no</hideOtherUsers>
+	<allowDirectDownload>no</allowDirectDownload>
 </configuration>';
 		return $xmlString;
 	}

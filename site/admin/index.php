@@ -64,41 +64,92 @@ if(isset($_SESSION['user']) && user_getUserByUsername($_SESSION['user'])->getAut
 </div>
 <?php
 }
+
 	require_once('../lib/configuration.php');
 
-//read settings from XML
+	//read settings from XML
 	$xmlConfig = config_getConfiguration();
-
-//write settings
+	
+	// We're going to save the settings.
 	if(count($_POST)) {
-	//write settings to XML
-		$xmlConfig->setDownloadLocation($_POST['downloadLocation']);
-		$xmlConfig->setTorrentModule($_POST['torrentModule']);
-		$xmlConfig->setMaxDownloadSpeed($_POST['maxDownloadSpeed']);
-		$xmlConfig->setMaxUploadSpeed($_POST['maxUploadSpeed']);
-		$xmlConfig->setMaxDownloads($_POST['maxDownloads']);
-		$xmlConfig->setMaxUploads($_POST['maxUploads']);
-		$xmlConfig->setMaxActiveTorrents($_POST['maxActiveTorrents']);
-		$xmlConfig->setTcpPort($_POST['tcpPort']);
-		$xmlConfig->setUdpPort($_POST['udpPort']);
-		$xmlConfig->setHideOtherUsers($_POST['hideOtherUsers']);
-		config_setConfiguration($xmlConfig);
-
-	//write settings to Torrent Module
-		require_once('../lib/torrent_module_loader.php');
-		$torrentModule = new TorrentFunctions('localhost');
-		$torrentModule->writeSetting(TorrentSetting::MaxDownloadSpeed, $_POST['maxDownloadSpeed']);
-		$torrentModule->writeSetting(TorrentSetting::MaxUploadSpeed, $_POST['maxUploadSpeed']);
-		$torrentModule->writeSetting(TorrentSetting::MaxDownloads, $_POST['maxDownloads']);
-		$torrentModule->writeSetting(TorrentSetting::MaxUploads, $_POST['maxUploads']);
-		$torrentModule->writeSetting(TorrentSetting::MaxActiveTorrents, $_POST['maxActiveTorrents']);
-		$torrentModule->writeSetting(TorrentSetting::TcpPort, $_POST['tcpPort']);
-		$torrentModule->writeSetting(TorrentSetting::UdpPort, $_POST['udpPort']);
-		?>
-<div id="divStatus">Settings saved.</div>
-<br />
-		<?php
-	} else print '<br />';
+		
+		// Let's first check for errors.
+		$errors = array();
+		
+		// If direct download has been allowed, we need to create a symlink to
+		// the directory where they are stored.
+		if( $_POST['allowDirectDownload'] == 'yes' ) {
+			
+			// Does it exist yet ?
+			if( !is_dir($symlink_to_direct_download_dir) ) {
+				
+				// We're going to create it ...
+				$r = symlink(
+					config_getConfiguration()->getDownloadLocation(),
+					$symlink_to_direct_download_dir
+				);
+				
+				// But that can fail !
+				if( $r == false ) {
+					$errors[] = "<strong>Unable to create a symlink to the downloaded files
+	directory.</strong><br />You either need to create a symlink
+	<code>downloaded-files</code> in the <code>site/</code> directory pointing to
+	<code>".config_getConfiguration()->getDownloadLocation()."</code> or allow
+	write access to Apache on the <code>site/</code> directory."; 
+				}
+			}
+		} else {
+			
+			// We won't need this symlink anymore.
+			unlink($symlink_to_direct_download_dir);
+			
+		}
+		
+		// If everything went fine, we can save everything.
+		if( empty($errors) ) {
+			
+			//write settings to XML
+			$xmlConfig->setDownloadLocation($_POST['downloadLocation']);
+			$xmlConfig->setTorrentModule($_POST['torrentModule']);
+			$xmlConfig->setMaxDownloadSpeed($_POST['maxDownloadSpeed']);
+			$xmlConfig->setMaxUploadSpeed($_POST['maxUploadSpeed']);
+			$xmlConfig->setMaxDownloads($_POST['maxDownloads']);
+			$xmlConfig->setMaxUploads($_POST['maxUploads']);
+			$xmlConfig->setMaxActiveTorrents($_POST['maxActiveTorrents']);
+			$xmlConfig->setTcpPort($_POST['tcpPort']);
+			$xmlConfig->setUdpPort($_POST['udpPort']);
+			$xmlConfig->setHideOtherUsers($_POST['hideOtherUsers']);
+			$xmlConfig->setAllowDirectDownload($_POST['allowDirectDownload']);
+			
+			config_setConfiguration($xmlConfig);
+			
+			//write settings to Torrent Module
+			require_once('../lib/torrent_module_loader.php');
+			$torrentModule = new TorrentFunctions('localhost');
+			$torrentModule->writeSetting(TorrentSetting::MaxDownloadSpeed, $_POST['maxDownloadSpeed']);
+			$torrentModule->writeSetting(TorrentSetting::MaxUploadSpeed, $_POST['maxUploadSpeed']);
+			$torrentModule->writeSetting(TorrentSetting::MaxDownloads, $_POST['maxDownloads']);
+			$torrentModule->writeSetting(TorrentSetting::MaxUploads, $_POST['maxUploads']);
+			$torrentModule->writeSetting(TorrentSetting::MaxActiveTorrents, $_POST['maxActiveTorrents']);
+			$torrentModule->writeSetting(TorrentSetting::TcpPort, $_POST['tcpPort']);
+			$torrentModule->writeSetting(TorrentSetting::UdpPort, $_POST['udpPort']);
+			?>
+			
+			<div id="divStatus">Settings saved.</div>
+			<br />
+			
+		<?php } else { ?>
+			
+			<div id="divStatus">
+				The following errors occured :<br /><br />
+				<?php echo implode('<br />', $errors); ?><br /><br />
+				<strong>The configuration wasn't saved.</strong>
+			</div>
+			<br />
+			
+		<?php } ?>
+	
+	<?php } else print '<br />';
 	?>
 			<form action="index.php" method="post">
 			<div class="divSetting">
@@ -166,17 +217,28 @@ if(isset($_SESSION['user']) && user_getUserByUsername($_SESSION['user'])->getAut
 					</select>
 				</div>
 			</div>
+			<div class="divSetting">
+				<div class="divSettingLabel">Allow direct file download ?</div>
+				<div class="divSettingText">
+					<select name="allowDirectDownload">
+						<option <?php if( $xmlConfig->getAllowDirectDownload() == 'yes' ): ?>selected="selected"<?php endif; ?>>yes</option>
+						<option <?php if( $xmlConfig->getAllowDirectDownload() == 'no' ): ?>selected="selected"<?php endif; ?>>no</option>
+					</select>
+				</div>
+			</div>
 			<div id="divSubmit"><input type="submit" value="Modify Settings" /></div>
 			</form>
-			<?php } else{?>
-			<div id="divStatus">Access denied.<br /><a href="../index.php">back</a></div>
-			<?php
-}?>
-		</div>
+			
+			<?php } else { ?>
+				<div id="divStatus">Access denied.<br /><a href="../index.php">back</a></div>
+			<?php } ?>
+		
+	</div>
 	</div>
 </div>
-					<?php
-					$pagemaincontent = ob_get_contents();	// Assign all Page Specific Variables
-					ob_end_clean();  $pageTitle = "TorrentVolve | Administration";  	//Apply the template
-					require_once("../master.php");
+
+<?php
+	$pagemaincontent = ob_get_contents();	// Assign all Page Specific Variables
+	ob_end_clean();  $pageTitle = "TorrentVolve | Administration";  	//Apply the template
+	require_once("../master.php");
 ?>
