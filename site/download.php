@@ -40,16 +40,20 @@ if(file_exists($filePath)) {
 		// We're going to need the zip function.
 		require_once('lib/zip.php');
 		
-		// We list files and create an archive of the folder for the user
-		// to download.
+		// We create our zip archive ...
 		$zipfile = "$filePath.zip";
-		$objects = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator($filePath),
-			RecursiveIteratorIterator::SELF_FIRST
-		);
-		$files = array();
-		foreach($objects as $name => $object) $files[] = $name;
-		create_zip($files, $zipfile, false);
+		$zip = new ZipArchive();
+		if( $zip->open($zipfile, ZIPARCHIVE::OVERWRITE) !== true) {
+			die("Couldn't create zip archive.");
+		}
+		
+		// ... And we're going to add the entire directory to it.
+		addFolderToZip($filePath.'/', $zip, '');
+		
+		// DEBUG
+		// echo 'The zip archive contains ',$zip->numFiles,
+		//	' files with a status of ',$zip->status;
+		$zip->close();
 		
 		// We're going to give the zip archive to our user.
 		$filePath = $zipfile;
