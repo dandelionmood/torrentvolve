@@ -93,7 +93,7 @@ if(file_exists($filePath)) {
 		
 		// We're using the configuration to define 
 		$direct_download_url = $url_to_direct_download_dir
-			.$_GET['user'].'/'.$fileName;
+			.$_GET['user'].'/'.$_GET['file'];
 		
 		header("Location: $direct_download_url");
 		
