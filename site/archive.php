@@ -28,6 +28,11 @@ $userName = $_SESSION['user'];
 
 function listDirectoryContents($rootDir, $userName, $subDir = '', $level = 0, $fileNameClass = 'fileNameUnsure') {
 
+	// We'll check if direct downloads are enabled.
+	$activated_direct_download = config_getConfiguration()->getAllowDirectDownload();
+	// We need to get that info from the configuration file.
+	global $url_to_direct_download_dir;
+	
 	$scanDir = "$rootDir/$userName/$subDir";
 
 	//grab contents of directory
@@ -50,9 +55,14 @@ function listDirectoryContents($rootDir, $userName, $subDir = '', $level = 0, $f
 				if(in_array($userDirItem . '.torrent', $userDirContents)) $fileNameClass = 'fileName';
 				else $fileNameClass = 'fileNameUnsure';
 			}
-
-			$downloadLink = 'download.php?user=' . $userName . '&amp;file=' . urlencode($subDir . $userDirItem);
-
+			
+			// If direct downloads are activated, we display the direct URL to the file.
+			if( $activated_direct_download ) {
+				$downloadLink = $url_to_direct_download_dir.$userName.'/'.$subDir.$userDirItem;
+			} else {
+				$downloadLink = 'download.php?user=' . $userName . '&amp;file=' . urlencode($subDir . $userDirItem);
+			}
+			
 			if(isset($_GET['user'])) $deleteLink = 'archive.php?user=' . $userName . '&amp;deleteFile=' . urlencode($subDir . $userDirItem);
 			else $deleteLink = 'archive.php?deleteFile=' . urlencode($subDir . $userDirItem);
 
